@@ -28,7 +28,7 @@ def keep_alive():
 
 # --- CONFIG ---
 TOKEN = "8959700806:AAEXzhnkmw6sY9w1xJqOVrmcjHG_VLFgzEk"
-OWNER_ID = 7681995468  # ဘရိုရဲ့ User ID
+OWNER_ID = 7681995468 
 
 running_spams = {}
 
@@ -37,19 +37,16 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
     
-    # ၁။ ဘရို (Owner) ဟုတ်မဟုတ် အရင်စစ်မယ်
+    # ၁။ ဘရို (Owner) မဟုတ်ရင် ပြန်ပြောမယ့်စာ
     if user_id != OWNER_ID:
-        # ဘရိုမဟုတ်ရင် ဘာမှပြန်မပြောဘဲ Ignore လုပ်ထားမယ်
+        await update.message.reply_text(" မင်းကိုဆရာအီကိုကခွင့်မပြုထားဘူး။ ဆရာအီကိုလို့ ၅ ခါခေါ်ရင်ခွင့်ပေးမယ်")
         return
 
-    # ၂။ Spamming လုပ်နေရင် ထပ်မလုပ်ဖို့
     if chat_id in running_spams:
-        await update.message.reply_text("⚠️ စပမ်းနေတုန်းပါ ဘရို။ ရပ်ချင်ရင် /stop နှိပ်ပါ။")
+        await update.message.reply_text("⚠️ စပမ်းနေတုန်းပါ ဘရို။")
         return
 
     target_mention = ""
-
-    # Target ရှာဖွေခြင်း
     if update.message.reply_to_message:
         user = update.message.reply_to_message.from_user
         target_mention = f"@{user.username}" if user.username else f"[{user.first_name}](tg://user?id={user.id})"
@@ -74,22 +71,28 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             while True:
                 for msg in messages:
-                    await context.bot.send_message(
-                        chat_id=chat_id, 
-                        text=f"{target_mention} {msg}",
-                        parse_mode=ParseMode.MARKDOWN
-                    )
-                    # မြန်နှုန်းမြင့် (၀.၃ စက္ကန့်)
-                    await asyncio.sleep(0.3)
-        except Exception as e:
-            logging.error(f"Error: {e}")
+                    try:
+                        await context.bot.send_message(
+                            chat_id=chat_id, 
+                            text=f"{target_mention} {msg}",
+                            parse_mode=ParseMode.MARKDOWN
+                        )
+                        # ငြိမ်အောင် ၀.၆ စက္ကန့်ထားထားတယ်
+                        await asyncio.sleep(0.6) 
+                    except Exception as e:
+                        logging.warning(f"Flood control: {e}")
+                        await asyncio.sleep(5) # Error တက်ရင် ၅ စက္ကန့်နားမယ်
+                        continue
+        except Exception:
+            pass
 
     task = asyncio.create_task(spam_loop())
     running_spams[chat_id] = task
 
 async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
-        return
+        await update.message.reply_text("❌ မင်းအဆင့်နဲ့ဘာကိုရပ်ချင်တာလဲ။ အရှင်သခင်အီကိုပဲရပ်လို့ရတယ်။")
+    return
     
     chat_id = update.effective_chat.id
     if chat_id in running_spams:
@@ -106,5 +109,5 @@ if __name__ == "__main__":
     app_bot.add_handler(CommandHandler("spam", start_spam))
     app_bot.add_handler(CommandHandler("stop", stop_spam))
     
-    print("🚀 Bot is running for Owner ONLY across all groups!")
+    print("🚀 Bot is running with Owner-Only Protection!")
     app_bot.run_polling()
