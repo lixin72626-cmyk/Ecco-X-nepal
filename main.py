@@ -90,17 +90,21 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     running_spams[chat_id] = task
 
 async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id != OWNER_ID:
-        await update.message.reply_text("❌ မင်းအဆင့်နဲ့ဘာကိုရပ်ချင်တာလဲ။ အရှင်သခင်အီကိုပဲရပ်လို့ရတယ်။")
-    return
-    
+    user_id = update.effective_user.id
     chat_id = update.effective_chat.id
+
+    # Owner ဟုတ်မဟုတ် အရင်စစ်မယ်
+    if user_id != OWNER_ID:
+        await update.message.reply_text("❌ မင်းအဆင့်နဲ့ဘာကိုရပ်ချင်တာလဲ။ အရှင်သခင်အီကိုပဲရပ်လို့ရတယ်။")
+        return
+
+    # Owner ဟုတ်ခဲ့ရင် အောက်ကဟာတွေ ဆက်လုပ်မယ်
     if chat_id in running_spams:
         running_spams[chat_id].cancel()
         del running_spams[chat_id]
-        await update.message.reply_text("ဆရာအီကိုကခွေး​သေး​လေးကိုအနိုင်ကျင့်တာရပ်လိုက်ပြီ။")
+        await update.message.reply_text("✅ ဆရာအီကိုက ခွေးသေးလေးကို အနိုင်ကျင့်တာ ရပ်လိုက်ပြီ။")
     else:
-        await update.message.reply_text("❌ ဘာမှ လုပ်မနေပါ ဘရို။")
+        await update.message.reply_text("❌ လက်ရှိမှာ ဘာစပမ်းမှ မလုပ်နေပါဘူး ဘရို။")
 
 # --- MAIN RUN ---
 if __name__ == "__main__":
