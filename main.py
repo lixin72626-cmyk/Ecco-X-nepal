@@ -28,43 +28,36 @@ def keep_alive():
 
 # --- CONFIG ---
 TOKEN = "8959700806:AAEXzhnkmw6sY9w1xJqOVrmcjHG_VLFgzEk"
-TARGET_GROUP = "-1003594812375"
+OWNER_ID = 7681995468  # ဘရိုရဲ့ User ID
 
 running_spams = {}
 
 # --- BOT FUNCTIONS ---
 async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_id = str(update.effective_chat.id)
+    user_id = update.effective_user.id
+    chat_id = update.effective_chat.id
     
-    if chat_id != TARGET_GROUP:
-        await update.message.reply_text("❌ ဒီ Group မှာ သုံးခွင့်မရှိပါ။")
+    # ၁။ ဘရို (Owner) ဟုတ်မဟုတ် အရင်စစ်မယ်
+    if user_id != OWNER_ID:
+        # ဘရိုမဟုတ်ရင် ဘာမှပြန်မပြောဘဲ Ignore လုပ်ထားမယ်
         return
 
+    # ၂။ Spamming လုပ်နေရင် ထပ်မလုပ်ဖို့
     if chat_id in running_spams:
-        await update.message.reply_text("⚠️ Spamming လုပ်နေတုန်းပါ။ ရပ်ချင်ရင် /stop နှိပ်ပါ။")
+        await update.message.reply_text("⚠️ စပမ်းနေတုန်းပါ ဘရို။ ရပ်ချင်ရင် /stop နှိပ်ပါ။")
         return
 
     target_mention = ""
 
-    # ၁။ Reply ပြန်ပြီး /spam ဟု ရိုက်ပါက Mention ယူခြင်း
+    # Target ရှာဖွေခြင်း
     if update.message.reply_to_message:
         user = update.message.reply_to_message.from_user
-        if user.username:
-            target_mention = f"@{user.username}"
-        else:
-            target_mention = f"[{user.first_name}](tg://user?id={user.id})"
-            
-    # ၂။ /spam @username သို့မဟုတ် /spam 12345678 (ID) ဟု ရိုက်ပါက ယူခြင်း
+        target_mention = f"@{user.username}" if user.username else f"[{user.first_name}](tg://user?id={user.id})"
     elif context.args:
         arg = context.args[0]
-        if arg.startswith("@"):
-            target_mention = arg
-        elif arg.isdigit():
-            target_mention = f"[User](tg://user?id={arg})"
-        else:
-            target_mention = arg
+        target_mention = arg if arg.startswith("@") else f"[User](tg://user?id={arg})"
     else:
-        await update.message.reply_text("❌ စပန်းမယ့်လူရဲ့ Message ကို Reply ပြန်ပါ (သို့မဟုတ်) Username/ID ထည့်ပေးပါ။")
+        await update.message.reply_text("❌ စပမ်းမယ့်လူကို Reply ပြန်ပါ သို့မဟုတ် Username/ID ထည့်ပါ။")
         return
 
     messages = [
@@ -81,27 +74,30 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             while True:
                 for msg in messages:
-                    # Markdown သုံးထားလို့ Username မရှိသူတွေကို ID နဲ့ Mt ထောက်နိုင်မှာဖြစ်ပါတယ်
                     await context.bot.send_message(
                         chat_id=chat_id, 
                         text=f"{target_mention} {msg}",
                         parse_mode=ParseMode.MARKDOWN
                     )
-                    await asyncio.sleep(3)
+                    # မြန်နှုန်းမြင့် (၀.၃ စက္ကန့်)
+                    await asyncio.sleep(0.3)
         except Exception as e:
-            logging.error(f"Error in spam loop: {e}")
+            logging.error(f"Error: {e}")
 
     task = asyncio.create_task(spam_loop())
     running_spams[chat_id] = task
 
 async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_id = str(update.effective_chat.id)
+    if update.effective_user.id != OWNER_ID:
+        return
+    
+    chat_id = update.effective_chat.id
     if chat_id in running_spams:
         running_spams[chat_id].cancel()
         del running_spams[chat_id]
         await update.message.reply_text("ဆရာအီကိုကခွေး​သေး​လေးကိုအနိုင်ကျင့်တာရပ်လိုက်ပြီ။")
     else:
-        await update.message.reply_text("❌ မည်သည့် Spam မှ လုပ်ဆောင်မနေပါ။")
+        await update.message.reply_text("❌ ဘာမှ လုပ်မနေပါ ဘရို။")
 
 # --- MAIN RUN ---
 if __name__ == "__main__":
@@ -110,5 +106,5 @@ if __name__ == "__main__":
     app_bot.add_handler(CommandHandler("spam", start_spam))
     app_bot.add_handler(CommandHandler("stop", stop_spam))
     
-    print("🚀 Bot is starting with ID-Mention Support...")
+    print("🚀 Bot is running for Owner ONLY across all groups!")
     app_bot.run_polling()
