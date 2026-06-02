@@ -27,7 +27,7 @@ def keep_alive():
     t.start()
 
 # --- CONFIG ---
-TOKEN = "8959700806:AAEXzhnkmw6sY9w1xJqOVrmcjHG_VLFgzEk"
+TOKEN = "8959700806:AAHjIVA5NdDbLtS2WW2j95HJyTktElW4jXE"
 OWNER_ID = 7681995468 
 
 # စပမ်းနေတဲ့ Chat တွေကို မှတ်ထားမယ့် Dictionary
