@@ -13,7 +13,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 # --- WEB SERVER (KEEP ALIVE) ---
 app = Flask('')
 @app.route('/')
-def home(): return "Multi-Bots are Alive!"
+def home(): return "Multi-Bots are Alive & Updated!"
 
 def run():
     port = int(os.environ.get('PORT', 8080))
@@ -24,7 +24,7 @@ def keep_alive():
     t.daemon = True
     t.start()
 
-# --- CONFIGURATION ---
+# --- CONFIGURATION (UPDATED TOKENS) ---
 TOKENS = [
     "8959700806:AAGSxeg0gY7U300DlFfXblg2fIkYV5MB1mE", 
     "8638389490:AAHUiHT5IdPxFbqKQGwdNwoimeApJ9xClds",                                
@@ -33,43 +33,42 @@ TOKENS = [
 OWNER_ID = 7681995468 
 MY_LINK = "https://t.me/kai_iz_mad51"
 
-# Task Management
+# Spamming Status ကို Track လုပ်ဖို့ Dictionary
 running_spams = {token: {} for token in TOKENS}
 
 # --- BOT FUNCTIONS ---
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # မူရင်း Link များကို ဖယ်ရှားပြီး ကိုယ်ပိုင် Link ဖြင့် အစားထိုးခြင်း
     join_msg = (
-        f"👋 **အရှင်သခင်အီကို့ Bot မှ ကြိုဆိုပါတယ်!**\n\n"
+        f"👋 **ဆရာအီကို့ Bot မှ ကြိုဆိုပါတယ်!**\n\n"
         f"🚀 ဒီ Bot ကို သုံးချင်ရင် အောက်က Channel ကို အရင် Join ပေးပါ -\n"
         f"🔗 {MY_LINK}\n\n"
-        f"⚠️ **သတိပေးချက်:** အရှင်သခင်အီကိုရဲ့ Link ကိုမင်းကို Join ဖို့အမိန့်ပေးတယ်။"
+        f"⚠️ **သတိပေးချက်:** Link မြင်ရဲ့သားနဲ့ မ Join ရင် ရည်းစားမရပါစေနဲ့။"
     )
-    await update.message.reply_text(join_msg, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False)
+    await update.message.reply_text(join_msg, parse_mode=ParseMode.MARKDOWN)
 
 async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
-    current_token = context.application.bot.token
+    token = context.application.bot.token
     
     if user_id != OWNER_ID:
-        await update.message.reply_text(f"❌ မင်းကို အရှင်သခင်အီကိုက ခွင့်မပြုထားဘူး။\nJoin ထားမှသုံးခွင့်ပေးမယ်။: {MY_LINK}")
+        await update.message.reply_text(f"❌ ဆရာအီကိုပဲ သုံးခွင့်ရှိတယ်။\nJoin: {MY_LINK}")
         return
 
-    if chat_id in running_spams[current_token]:
-        await update.message.reply_text("⚠️ ကျနော်က စပမ်းနေတုန်းပါ ဆရာ။")
+    if chat_id in running_spams[token] and running_spams[token][chat_id]:
+        await update.message.reply_text("⚠️ ဒီ Bot က အလုပ်လုပ်နေတုန်းပဲ ဆရာ!")
         return
 
-    target_mention = ""
+    # Target ရှာဖွေခြင်း
+    target = ""
     if update.message.reply_to_message:
         user = update.message.reply_to_message.from_user
-        target_mention = f"@{user.username}" if user.username else f"[{user.first_name}](tg://user?id={user.id})"
+        target = f"@{user.username}" if user.username else f"[{user.first_name}](tg://user?id={user.id})"
     elif context.args:
-        arg = context.args[0]
-        target_mention = arg if arg.startswith("@") else f"[User](tg://user?id={arg})"
+        target = context.args[0]
     else:
-        await update.message.reply_text("❌ စပမ်းမယ့်လူကို Reply ပြန်ပါ သို့မဟုတ် Username/ID ထည့်ပါ။")
+        await update.message.reply_text("❌ ဘယ်ကောင်ကို ဆဲရမလဲ ပြောဦးလေ။")
         return
 
     messages = [
@@ -80,44 +79,34 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "မင်းအမေစောက်ဖုတ်ကိုဂျွမ်းပြစ်လိုး လိုက်ရ ကမ္ဘာ့အပြင်ဘက်ကိုရောက်ရုံတောင်မက ဂြိုလ်သားတွေနဲ့ မိတ်လိုက်ပြီးလျှပ်စစ်တွေ လျှက်ကုန်မယ် ကောင်းကင်မှာ လျှပ်စစ်လျက်ရင် မင်းအမေနဲ့ဂြိုလ်သားလိုးနေတယ်လို့သာမှတ်ထားလိုက် 😳👈"
     ]
     
-    await update.message.reply_text(f"🔥 {target_mention} ဒီစောက်တောသားကို အရှင်သခင်အီကို အနိုင်ကျင့်ပြီ...", parse_mode=ParseMode.MARKDOWN)
+    running_spams[token][chat_id] = True
+    await update.message.reply_text(f"🔥 {target} ကို အရှင်သခင်အီကို အနိုင်ကျင့်နေပြီ...", parse_mode=ParseMode.MARKDOWN)
 
-    async def spam_loop():
-        try:
-            while True:
-                for msg in messages:
-                    try:
-                        await context.bot.send_message(
-                            chat_id=chat_id, 
-                            text=f"{target_mention} {msg}",
-                            parse_mode=ParseMode.MARKDOWN
-                        )
-                        await asyncio.sleep(0.8)
-                    except Exception as e:
-                        logging.warning(f"Error: {e}")
-                        await asyncio.sleep(5)
-                        continue
-        except asyncio.CancelledError:
-            logging.info(f"Spam stopped in {chat_id}")
-
-    task = asyncio.create_task(spam_loop())
-    running_spams[current_token][chat_id] = task 
+    try:
+        while running_spams[token].get(chat_id, False):
+            for msg in messages:
+                if not running_spams[token].get(chat_id, False): break 
+                try:
+                    await context.bot.send_message(chat_id=chat_id, text=f"{target} {msg}", parse_mode=ParseMode.MARKDOWN)
+                    await asyncio.sleep(0.8)
+                except Exception:
+                    await asyncio.sleep(3)
+    except Exception as e:
+        logging.error(f"Spam Loop Error: {e}")
 
 async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
-    current_token = context.application.bot.token
+    token = context.application.bot.token
     
     if user_id != OWNER_ID:
-        await update.message.reply_text("❌ မင်းအဆင့်နဲ့ဘာကိုရပ်ချင်တာလဲ။ အရှင်သခင်အီကိုပဲရပ်လို့ရတယ်။")
         return
     
-    if chat_id in running_spams[current_token]:
-        running_spams[current_token][chat_id].cancel()
-        del running_spams[current_token][chat_id]
+    if chat_id in running_spams[token]:
+        running_spams[token][chat_id] = False # Flag ကို ပိတ်လိုက်ခြင်းဖြင့် Loop ကို ရပ်စေသည်
         await update.message.reply_text("✅ ဆရာအီကိုက ခွေးသေးလေးကို အနိုင်ကျင့်တာ ရပ်လိုက်ပြီ။")
     else:
-        await update.message.reply_text("❌ လက်ရှိမှာ ဘာစပမ်းမှ မလုပ်နေပါဘူး။")
+        await update.message.reply_text("❌ ရပ်စရာ Spam မရှိပါဘူး။")
 
 # --- MAIN RUN ---
 async def main():
@@ -126,7 +115,6 @@ async def main():
     for token in TOKENS:
         try:
             app_bot = ApplicationBuilder().token(token).build()
-            
             app_bot.add_handler(CommandHandler("start", start))
             app_bot.add_handler(CommandHandler("spam", start_spam))
             app_bot.add_handler(CommandHandler("stop", stop_spam))
@@ -134,9 +122,9 @@ async def main():
             await app_bot.initialize()
             await app_bot.start()
             await app_bot.updater.start_polling()
-            print(f"🚀 Bot - {token[:10]}... Started!")
+            print(f"🚀 Bot - {token[:10]}... Online!")
         except Exception as e:
-            print(f"❌ Error starting bot {token[:10]}: {e}")
+            print(f"❌ Token error {token[:10]}: {e}")
 
     while True:
         await asyncio.sleep(3600)
