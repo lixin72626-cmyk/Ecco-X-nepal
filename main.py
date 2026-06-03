@@ -95,7 +95,7 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
                             text=f"{target_mention} {msg}",
                             parse_mode=ParseMode.MARKDOWN
                         )
-                        await asyncio.sleep(0.6)
+                        await asyncio.sleep(0.8)
                     except Exception as e:
                         logging.warning(f"Error: {e}")
                         await asyncio.sleep(5)
