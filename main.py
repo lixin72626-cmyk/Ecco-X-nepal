@@ -27,9 +27,9 @@ def keep_alive():
 
 # --- CONFIGURATION (သေချာစစ်ဆေးပြီးသား Token များ) ---
 TOKENS = [
-    "8959700806:AAGSxeg0gY7U300DlFfXblg2fIkYV5MB1mE", 
-    "8638389490:AAHUiHT5IdPxFbqKQGwdNwoimeApJ9xClds",                                
-    "8697695665:AAFTLZ3VG3kMtQ84Al72J-jKyBPO_dqO9QE"                                 
+    "8959700806:AAEmQkfrDB38_gbyxIEBYYjyfzWwM_1vYDM", 
+    "8638389490:AAGmHdnp5p1PJpScyYpKZ593uP4N_Gq6kCE",                                
+    "8697695665:AAHCzpDOG8fKVCQ42qUM7hr7MWDCbhNUjwY"                                 
 ]
 
 # သုံးခွင့်ရှိမယ့် User ID များ (ဒီစာရင်းထဲကို ID အသစ်တွေ ကော်မာခံပြီး ထည့်နိုင်ပါတယ်)
