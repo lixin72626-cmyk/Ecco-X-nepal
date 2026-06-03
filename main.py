@@ -7,13 +7,11 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from telegram.constants import ParseMode
 
-# --- LOGGING SETUP ---
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# --- WEB SERVER ---
 app = Flask('')
 @app.route('/')
-def home(): return "Multi-Bots Fixed & Running!"
+def home(): return "Multi-Bots Fixed & Ready!"
 
 def run():
     port = int(os.environ.get('PORT', 8080))
@@ -24,7 +22,7 @@ def keep_alive():
     t.daemon = True
     t.start()
 
-# --- UPDATED TOKENS ---
+# --- CONFIG ---
 TOKENS = [
     "8959700806:AAGSxeg0gY7U300DlFfXblg2fIkYV5MB1mE", 
     "8638389490:AAHUiHT5IdPxFbqKQGwdNwoimeApJ9xClds",                                
@@ -33,10 +31,8 @@ TOKENS = [
 OWNER_ID = 7681995468 
 MY_LINK = "https://t.me/kai_iz_mad51"
 
-# Task တွေကို သိမ်းထားဖို့ (အသေချာ ရပ်ပစ်ဖို့အတွက်)
-active_tasks = {token: {} for token in TOKENS}
-
-# --- FUNCTIONS ---
+# 🔥 အရေးကြီးဆုံးအပိုင်း- Bot တစ်ကောင်ချင်းစီအတွက် Task တွေကို သီးသန့်ခွဲမှတ်မယ်
+bot_task_manager = {}
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg = f"👋 **ဆရာအီကို့ Bot!**\n\nJoin: {MY_LINK}\n(မ Join ရင် ရည်းစားမရပါစေနဲ့)"
@@ -45,14 +41,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
-    token = context.application.bot.token
+    bot_id = context.bot.id # လက်ရှိ Bot ရဲ့ ID ကို ယူမယ်
     
     if user_id != OWNER_ID:
         return
 
-    # အဟောင်းရှိရင် အရင်သတ်မယ်
-    if chat_id in active_tasks[token]:
-        active_tasks[token][chat_id].cancel()
+    # ဒီ Bot ရဲ့ ဒီ Chat ထဲမှာ Run နေတာရှိရင် အရင်ရပ်မယ်
+    if bot_id in bot_task_manager and chat_id in bot_task_manager[bot_id]:
+        bot_task_manager[bot_id][chat_id].cancel()
 
     target = ""
     if update.message.reply_to_message:
@@ -72,54 +68,62 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "မင်းအမေစောက်ဖုတ်ကိုဂျွမ်းပြစ်လိုး..."
     ]
 
-    async def spam_worker():
+    async def worker():
         try:
             while True:
                 for msg in messages:
                     try:
-                        # စာပို့တာကို တိုက်ရိုက်လုပ်မယ်
                         await context.bot.send_message(chat_id=chat_id, text=f"{target} {msg}", parse_mode=ParseMode.MARKDOWN)
-                        await asyncio.sleep(0.7) # Speed နည်းနည်းလျှော့တာက ပိုရပ်ရလွယ်စေပါတယ်
+                        await asyncio.sleep(0.8) # Rate limit မမိအောင် ၀.၈ စက္ကန့် ထားထားပါတယ်
                     except Exception:
                         await asyncio.sleep(5)
         except asyncio.CancelledError:
-            logging.info(f"Task Cancelled in {chat_id}")
+            pass # ရပ်လိုက်တဲ့အခါ ဘာမှထပ်မလုပ်ခိုင်းတော့ဘူး
 
-    # Task အသစ်ကို စပြီး မှတ်ထားမယ်
-    task = asyncio.create_task(spam_worker())
-    active_tasks[token][chat_id] = task
+    # Task ကို စာရင်းသွင်းမယ်
+    task = asyncio.create_task(worker())
+    if bot_id not in bot_task_manager:
+        bot_task_manager[bot_id] = {}
+    bot_task_manager[bot_id][chat_id] = task
+    
     await update.message.reply_text(f"🔥 {target} ကို စတင်နှိပ်စက်နေပါပြီ...")
 
 async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
-    token = context.application.bot.token
+    bot_id = context.bot.id
     
     if user_id != OWNER_ID: return
     
-    if chat_id in active_tasks[token]:
-        # Task ကို ချက်ချင်း ရပ်ပစ် (Kill) တာပါ
-        active_tasks[token][chat_id].cancel()
-        del active_tasks[token][chat_id]
-        await update.message.reply_text("✅ **ပြတ်ပြတ်သားသား ရပ်လိုက်ပြီ ဆရာကြီး!**")
+    # ဒီ Bot ရဲ့ Task Manager ထဲမှာ ဒီ Chat ရှိလား စစ်မယ်
+    if bot_id in bot_task_manager and chat_id in bot_task_manager[bot_id]:
+        bot_task_manager[bot_id][chat_id].cancel() # အသေသတ်လိုက်ပြီ
+        del bot_task_manager[bot_id][chat_id]
+        await update.message.reply_text("✅ **ဆရာအီကို့အမိန့်အရ ရပ်လိုက်ပြီ!**")
     else:
-        await update.message.reply_text("❌ ရပ်စရာ Spam မရှိဘူး။")
+        await update.message.reply_text("❌ ရပ်စရာ Spam မရှိဘူး။ (ဒီ Bot အတွက်)")
 
 async def main():
     keep_alive()
+    tasks = []
     for token in TOKENS:
         try:
             app = ApplicationBuilder().token(token).build()
             app.add_handler(CommandHandler("start", start))
             app.add_handler(CommandHandler("spam", start_spam))
             app.add_handler(CommandHandler("stop", stop_spam))
+            
             await app.initialize()
             await app.start()
             await app.updater.start_polling()
-            print(f"🚀 Bot {token[:10]}... Online!")
-        except: pass
+            print(f"🚀 Bot ID: {token.split(':')[0]} Online!")
+        except Exception as e:
+            print(f"❌ Error: {e}")
     
     while True: await asyncio.sleep(3600)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        pass
