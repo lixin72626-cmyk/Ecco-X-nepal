@@ -25,52 +25,49 @@ def keep_alive():
     t.start()
 
 # --- CONFIGURATION ---
-# ⚠️ Bot Token ၃ ခုလုံးကို ဒီမှာ အမှန်ပြင်ထည့်ပါ
 TOKENS = [
-    "8959700806:AAG4xuyDTIfOECe49BD0pcY94nI4ix9btVo", # Bot ၁
-    "8638389490:AAEL9cCCZo0V2E7q5_3gpx1MvWz5yM9LmJk",                                # Bot ၂
-    "8697695665:AAEvel5LGpyuk9EhB53pmYM3W4UZpAUyk0E"                                 # Bot ၃
+    "8959700806:AAGSxeg0gY7U300DlFfXblg2fIkYV5MB1mE", 
+    "8638389490:AAHUiHT5IdPxFbqKQGwdNwoimeApJ9xClds",                                
+    "8697695665:AAFTLZ3VG3kMtQ84Al72J-jKyBPO_dqO9QE"                                 
 ]
 OWNER_ID = 7681995468 
+MY_LINK = "https://t.me/kai_iz_mad51"
 
-# { "bot_token": { "chat_id": task } } ပုံစံမျိုးနဲ့ ခွဲမှတ်ပြီး ရပ်လို့ရအောင် လုပ်ထားပါတယ်
+# Task Management
 running_spams = {token: {} for token in TOKENS}
 
 # --- BOT FUNCTIONS ---
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("👋 **ဆရာအီကို့ Bot မှ ကြိုဆိုပါတယ်!**", parse_mode=ParseMode.MARKDOWN)
+    # မူရင်း Link များကို ဖယ်ရှားပြီး ကိုယ်ပိုင် Link ဖြင့် အစားထိုးခြင်း
+    join_msg = (
+        f"👋 **အရှင်သခင်အီကို့ Bot မှ ကြိုဆိုပါတယ်!**\n\n"
+        f"🚀 ဒီ Bot ကို သုံးချင်ရင် အောက်က Channel ကို အရင် Join ပေးပါ -\n"
+        f"🔗 {MY_LINK}\n\n"
+        f"⚠️ **သတိပေးချက်:** အရှင်သခင်အီကိုရဲ့ Link ကိုမင်းကို Join ဖို့အမိန့်ပေးတယ်။"
+    )
+    await update.message.reply_text(join_msg, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=False)
 
 async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
-    current_token = context.application.bot.token  # ဘယ် Bot ထဲမှာ ရောက်နေလဲ သိအောင်လုပ်ခြင်း
+    current_token = context.application.bot.token
     
     if user_id != OWNER_ID:
-        await update.message.reply_text("❌ မင်းကိုဆရာအီကိုကခွင့်မပြုထားဘူး။")
+        await update.message.reply_text(f"❌ မင်းကို အရှင်သခင်အီကိုက ခွင့်မပြုထားဘူး။\nJoin ထားမှသုံးခွင့်ပေးမယ်။: {MY_LINK}")
         return
 
-    # လက်ရှိ Bot ရဲ့ chat ထဲမှာ run နေလား စစ်မယ်
     if chat_id in running_spams[current_token]:
-        await update.message.reply_text("⚠️ ဒီ Bot က စပမ်းနေတုန်းပါ ဘရို။")
+        await update.message.reply_text("⚠️ ကျနော်က စပမ်းနေတုန်းပါ ဆရာ။")
         return
 
-    # --- Target (ပစ်မှတ်) ရှာဖွေခြင်း အဆင့်မြင့်ပြင်ဆင်ချက် ---
     target_mention = ""
-    
-    # ၁။ ရိုးရိုး Reply ပြန်ထားရင် ယူမယ့်ပုံစံ (Mention မလိုတော့ပါ)
     if update.message.reply_to_message:
         user = update.message.reply_to_message.from_user
-        if user.username:
-            target_mention = f"@{user.username}"
-        else:
-            target_mention = f"[{user.first_name}](tg://user?id={user.id})"
-            
-    # ၂။ Argument ထည့်ထားရင် ယူမယ့်ပုံစံ (ဥပမာ- /spam @username သို့မဟုတ် /spam id)
+        target_mention = f"@{user.username}" if user.username else f"[{user.first_name}](tg://user?id={user.id})"
     elif context.args:
         arg = context.args[0]
         target_mention = arg if arg.startswith("@") else f"[User](tg://user?id={arg})"
-        
     else:
         await update.message.reply_text("❌ စပမ်းမယ့်လူကို Reply ပြန်ပါ သို့မဟုတ် Username/ID ထည့်ပါ။")
         return
@@ -104,7 +101,7 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
             logging.info(f"Spam stopped in {chat_id}")
 
     task = asyncio.create_task(spam_loop())
-    running_spams[current_token][chat_id] = task  # သက်ဆိုင်ရာ Bot ရဲ့ စာရင်းထဲပဲ ထည့်မှတ်မယ်
+    running_spams[current_token][chat_id] = task 
 
 async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -115,35 +112,32 @@ async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ မင်းအဆင့်နဲ့ဘာကိုရပ်ချင်တာလဲ။ အရှင်သခင်အီကိုပဲရပ်လို့ရတယ်။")
         return
     
-    # သက်ဆိုင်ရာ Bot ရဲ့ စာရင်းထဲကနေပဲ ရှာပြီး ရပ်မယ်
     if chat_id in running_spams[current_token]:
         running_spams[current_token][chat_id].cancel()
         del running_spams[current_token][chat_id]
         await update.message.reply_text("✅ ဆရာအီကိုက ခွေးသေးလေးကို အနိုင်ကျင့်တာ ရပ်လိုက်ပြီ။")
     else:
-        await update.message.reply_text("❌ လက်ရှိမှာ ဘာစပမ်းမှ မလုပ်နေပါဘူး ဘရို။")
+        await update.message.reply_text("❌ လက်ရှိမှာ ဘာစပမ်းမှ မလုပ်နေပါဘူး။")
 
 # --- MAIN RUN ---
 async def main():
     keep_alive()
     
-    # Token တစ်ခုချင်းစီအတွက် Loop ပတ်ပြီး သီးသန့် အလုပ်လုပ်ခိုင်းမယ်
     for token in TOKENS:
-        if token.startswith("TOKEN_"): # Token အမှန်မထည့်ရသေးရင် ကျော်သွားဖို့
-            continue
+        try:
+            app_bot = ApplicationBuilder().token(token).build()
             
-        app_bot = ApplicationBuilder().token(token).build()
-        
-        app_bot.add_handler(CommandHandler("start", start))
-        app_bot.add_handler(CommandHandler("spam", start_spam))
-        app_bot.add_handler(CommandHandler("stop", stop_spam))
-        
-        await app_bot.initialize()
-        await app_bot.start()
-        await app_bot.updater.start_polling()
-        print(f"🚀 Bot - {token[:10]}... Started Successfully!")
+            app_bot.add_handler(CommandHandler("start", start))
+            app_bot.add_handler(CommandHandler("spam", start_spam))
+            app_bot.add_handler(CommandHandler("stop", stop_spam))
+            
+            await app_bot.initialize()
+            await app_bot.start()
+            await app_bot.updater.start_polling()
+            print(f"🚀 Bot - {token[:10]}... Started!")
+        except Exception as e:
+            print(f"❌ Error starting bot {token[:10]}: {e}")
 
-    # Bot ၃ ကောင်လုံး ပြိုင်တူ သေဆုံးမသွားဘဲ စောင့်ကြည့်နေမယ့်နေရာ
     while True:
         await asyncio.sleep(3600)
 
