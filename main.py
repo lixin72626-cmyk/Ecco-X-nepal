@@ -31,7 +31,7 @@ TOKENS = [
     "8697695665:AAFTLZ3VG3kMtQ84Al72J-jKyBPO_dqO9QE"                                 
 ]
 OWNER_ID = 7681995468 
-MY_LINK = "https://t.me/kai_iz_mad51"
+MY_LINK = "https://t.me/eccolism"
 
 # Spamming Status ကို Track လုပ်ဖို့ Dictionary
 running_spams = {token: {} for token in TOKENS}
@@ -40,10 +40,10 @@ running_spams = {token: {} for token in TOKENS}
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     join_msg = (
-        f"👋 **ဆရာအီကို့ Bot မှ ကြိုဆိုပါတယ်!**\n\n"
-        f"🚀 ဒီ Bot ကို သုံးချင်ရင် အောက်က Channel ကို အရင် Join ပေးပါ -\n"
+        f" အရှင်သခင်အီကို့ Bot ကိုသုံးချင်နေပြီလား\n\n"
+        f" ဒီ Bot ကိုသုံးချင်ရင် အောက်က Channel ကိုအရင် Join တပဲ့ -\n"
         f"🔗 {MY_LINK}\n\n"
-        f"⚠️ **သတိပေးချက်:** Link မြင်ရဲ့သားနဲ့ မ Join ရင် ရည်းစားမရပါစေနဲ့။"
+        f"⚠️  Link မြင်ရဲ့သားနဲ့မ Join ရင်မင်းအမေငါလိုး Bot Owner - @Ecco2k5။"
     )
     await update.message.reply_text(join_msg, parse_mode=ParseMode.MARKDOWN)
 
@@ -80,7 +80,7 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     
     running_spams[token][chat_id] = True
-    await update.message.reply_text(f"🔥 {target} ကို အရှင်သခင်အီကို အနိုင်ကျင့်နေပြီ...", parse_mode=ParseMode.MARKDOWN)
+    await update.message.reply_text(f"🔥 {target} ဒီစောက်တောသားကို အရှင်သခင်အီကို အနိုင်ကျင့်နေပြီ...", parse_mode=ParseMode.MARKDOWN)
 
     try:
         while running_spams[token].get(chat_id, False):
@@ -104,7 +104,7 @@ async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     if chat_id in running_spams[token]:
         running_spams[token][chat_id] = False # Flag ကို ပိတ်လိုက်ခြင်းဖြင့် Loop ကို ရပ်စေသည်
-        await update.message.reply_text("✅ ဆရာအီကိုက ခွေးသေးလေးကို အနိုင်ကျင့်တာ ရပ်လိုက်ပြီ။")
+        await update.message.reply_text("✅ ဆရာအီကိုက ခွေးသေးသေးလေးကို အနိုင်ကျင့်တာ ရပ်လိုက်ပြီ။")
     else:
         await update.message.reply_text("❌ ရပ်စရာ Spam မရှိပါဘူး။")
 
