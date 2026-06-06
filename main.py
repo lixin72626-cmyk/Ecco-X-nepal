@@ -16,7 +16,6 @@ app = Flask('')
 def home(): return "Multi-Bots System is Online & Fully Fixed!"
 
 def run():
-    # Render သို့မဟုတ် အခြား Hosting တွေအတွက် Port 8080 ကို သုံးပါတယ်
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
 
@@ -25,17 +24,21 @@ def keep_alive():
     t.daemon = True
     t.start()
 
-# --- CONFIGURATION (သေချာစစ်ဆေးပြီးသား Token များ) ---
+# --- CONFIGURATION (သင်ပေးထားသော Token အသစ်များ) ---
 TOKENS = [
-    "8959700806:AAE2kmurDt9qG5UmMYwJisQ9gBrknkvXjBE", 
-    "8638389490:AAEk0HDdWNPsW1y-Hv5IFoqkwr2mEDfZC8c",                                
-    "8697695665:AAHJU7mHFe1SP5QTnKbFBoHI-pvnNeIZetI"                                 
+    "8959700806:AAF774P3QFqBbiBID2UnqLu6A_QXeCR1xu0", 
+    "8638389490:AAF-nxGjx33831If2qmVrsyNHI8JBXjNvz0",                                
+    "8697695665:AAFo-0E4WjbiOUBGLYWRv0aUBS7cGwy8vEw"                                 
 ]
 
 # သုံးခွင့်ရှိမယ့် User ID များ (ဒီစာရင်းထဲကို ID အသစ်တွေ ကော်မာခံပြီး ထည့်နိုင်ပါတယ်)
 AUTHORIZED_USERS = [7681995468] 
 
-MY_LINK = "https://t.me/kai_iz_mad51"
+MY_LINK = "https://t.me/eccolism"
+
+# 🚀 စနစ်တကျ ခွဲခြားရပ်နားနိုင်ရန် Task များကို သိမ်းဆည်းမည့် Global Dictionary
+# ပုံစံ - { bot_id: { chat_id: task_object } }
+all_running_tasks = {}
 
 # --- ACCESS CONTROL HELPER ---
 def is_authorized(user_id):
@@ -47,7 +50,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if not is_authorized(user_id):
         return await update.message.reply_text(
-            f" **မင်းကိုအရှင်အခင်အီကိုပေးမသုံးသေးဘူး။**\n\nဒီ Link ကိုအရင် Join လိုက်၊ ပြီးရင် အီကို့ဆီမှာအသနားသွားခံ၊ -\n🔗 {MY_LINK}\n\n⚠️ (ပြီးရင် Dm မှာပါမစ်လာယူ @Ecco2k5)",
+            f"❌ **မင်းကိုအရှင်အခင်အီကိုပေးမသုံးသေးဘူး။**\n\nဒီ Link ကိုအရင် Join လိုက်၊ ပြီးရင် အီကို့ဆီမှာအသနားသွားခံ -\n🔗 {MY_LINK}\n\n⚠️ (ပြီးရင် Dm မှာပါမစ်လာယူ @Ecco2k5)",
             disable_web_page_preview=False
         )
     await update.message.reply_text("✅ **အရှင်သခင်အီကို လိုအပ်ရာခိုင်းစေဖို့ အဆင်သင့်ပါပဲ!**")
@@ -55,16 +58,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
+    bot_id = context.bot.id
     
-    # ၁။ ခွင့်ပြုချက် စစ်ဆေးခြင်း
+    # ခွင့်ပြုချက် စစ်ဆေးခြင်း
     if not is_authorized(user_id):
         return await update.message.reply_text(f"❌ အရှင်သခင်အီကိုက ပေးမသုံးသေးဘူး။ အရင် Join ပါ: {MY_LINK}")
 
-    # ၂။ အရင် run နေတဲ့ Task ရှိရင် ချက်ချင်း ရပ်ပစ်ခြင်း (Stop logic ပိုသေချာစေရန်)
-    if 'current_task' in context.chat_data:
-        context.chat_data['current_task'].cancel()
+    # လက်ရှိ Bot ရဲ့ ဒီ Chat ထဲမှာ အဟောင်း Run နေတာရှိရင် အရင် Cancel လုပ်မယ်
+    if bot_id in all_running_tasks and chat_id in all_running_tasks[bot_id]:
+        all_running_tasks[bot_id][chat_id].cancel()
 
-    # ၃။ Target (ပစ်မှတ်) သတ်မှတ်ခြင်း
+    # Target (ပစ်မှတ်) သတ်မှတ်ခြင်း
     target = ""
     if update.message.reply_to_message:
         user = update.message.reply_to_message.from_user
@@ -82,58 +86,101 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "မင်းအမေစောက်ဖုတ်ကိုဂျွမ်းပြစ်လိုး လိုက်ရ ကမ္ဘာ့အပြင်ဘက်ကိုရောက်ရုံတောင်မက ဂြိုလ်သားတွေနဲ့ မိတ်လိုက်ပြီးလျှပ်စစ်တွေ လျှက်ကုန်မယ် ကောင်းကင်မှာ လျှပ်စစ်လျက်ရင် မင်းအမေနဲ့ဂြိုလ်သားလိုးနေတယ်လို့သာမှတ်ထားလိုက် 😳👈"
     ]
 
-    # ၄။ Spam Worker (Looping စနစ်)
+    # Spam Looping စနစ် (၀.၈ စက္ကန့်တစ်ကြိမ်)
     async def spam_worker():
         try:
             while True:
                 for msg in messages:
                     try:
                         await context.bot.send_message(chat_id=chat_id, text=f"{target} {msg}", parse_mode=ParseMode.MARKDOWN)
-                        await asyncio.sleep(0.8) # ၀.၈ စက္ကန့် တစ်ကြိမ်
+                        await asyncio.sleep(0.8)
                     except Exception:
                         await asyncio.sleep(3)
         except asyncio.CancelledError:
-            pass # ရပ်လိုက်တဲ့အခါ တိတ်တဆိတ် ထွက်သွားမယ်
+            pass
 
-    # Task ကို စာရင်းသွင်းပြီး စတင်မယ်
     task = asyncio.create_task(spam_worker())
-    context.chat_data['current_task'] = task
+    if bot_id not in all_running_tasks:
+        all_running_tasks[bot_id] = {}
+    all_running_tasks[bot_id][chat_id] = task
     await update.message.reply_text(f"🔥 {target} ကို နှိပ်စက်ခြင်း စတင်ပါပြီ!")
 
+# 1️⃣ /stop သို့မဟုတ် /stop @botusername (သက်ဆိုင်ရာ Bot တစ်ကောင်တည်းကိုပဲ လက်ရှိ Group မှာ ရပ်ခြင်း)
 async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    chat_id = update.effective_chat.id
+    current_bot_id = context.bot.id
+    current_bot_username = context.bot.username
+    
+    if not is_authorized(user_id): return
+
+    # @botusername ပါရင် စစ်ဆေးပြီး သက်ဆိုင်ရာကောင်ပဲ ရပ်မယ်
+    if context.args:
+        input_username = context.args[0].replace("@", "").strip()
+        if current_bot_username and input_username.lower() != current_bot_username.lower():
+            return 
+
+    if current_bot_id in all_running_tasks and chat_id in all_running_tasks[current_bot_id]:
+        all_running_tasks[current_bot_id][chat_id].cancel()
+        del all_running_tasks[current_bot_id][chat_id]
+        await update.message.reply_text(f"✅ @{current_bot_username} ကို ဒီ Group ထဲမှာ ရပ်နားလိုက်ပါပြီ!")
+    else:
+        await update.message.reply_text(f"❌ ဒီ Bot က ဒီ Group ထဲမှာ Spam မလုပ်နေပါဘူး။")
+
+# 2️⃣ /3stun (ဘော့ (၃) ကောင်လုံးကို လက်ရှိ Group ထဲမှာတင် တစ်ပြိုင်နက်တည်း ရပ်တန့်ခြင်း)
+async def stun_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    chat_id = update.effective_chat.id
+    
+    if not is_authorized(user_id): return
+
+    stopped_count = 0
+    for bot_id in list(all_running_tasks.keys()):
+        if chat_id in all_running_tasks[bot_id]:
+            all_running_tasks[bot_id][chat_id].cancel()
+            del all_running_tasks[bot_id][chat_id]
+            stopped_count += 1
+
+    if stopped_count > 0:
+        await update.message.reply_text(f"⚡ **/3stun အမိန့်အရ** ဘော့အားလုံးကို ဒီ Group ထဲမှာ အကုန်ရပ်လိုက်ပါပြီ!")
+    else:
+        await update.message.reply_text("❌ ဒီ Group ထဲမှာ Spam နေတဲ့ ဘော့ မရှိပါဘူး။")
+
+# 3️⃣ /Reset (ဘယ် Group မှာမဆို ရှိသမျှ Bot တွေရဲ့ Spam Task အားလုံးကို တစ်ကမ္ဘာလုံးအတိုင်းအတာနဲ့ Force Kill လုပ်ခြင်း)
+async def reset_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if not is_authorized(user_id): return
 
-    # ၅။ Task ကို ပြတ်ပြတ်သားသား ရပ်ပစ်ခြင်း
-    if 'current_task' in context.chat_data:
-        context.chat_data['current_task'].cancel()
-        del context.chat_data['current_task']
-        await update.message.reply_text("✅ **အရှင်သခင်အီကို့အမိန့်အရ ရပ်လိုက်ပြီ!**")
-    else:
-        await update.message.reply_text("❌ ရပ်စရာ Spamming မရှိပါဘူး။")
+    total_killed = 0
+    for bot_id in list(all_running_tasks.keys()):
+        for chat_id in list(all_running_tasks[bot_id].keys()):
+            all_running_tasks[bot_id][chat_id].cancel()
+            total_killed += 1
+            
+    all_running_tasks.clear()
+    await update.message.reply_text(f"🚨 **/Reset စနစ်ဖြင့်** ရှိသမျှ Group ပေါင်းစုံက Spam Task ({total_killed}) ခုလုံးကို လုံးဝ Clear လုပ်လိုက်ပါပြီ!")
 
 # --- MAIN RUNNER ---
 async def main():
-    keep_alive() # Web server စတင်ခြင်း
+    keep_alive()
     
     for token in TOKENS:
         try:
             app = ApplicationBuilder().token(token).build()
             
-            # Commands များ ထည့်သွင်းခြင်း
             app.add_handler(CommandHandler("start", start))
             app.add_handler(CommandHandler("spam", start_spam))
             app.add_handler(CommandHandler("stop", stop_spam))
+            app.add_handler(CommandHandler("3stun", stun_all))
+            app.add_handler(CommandHandler("reset", reset_all))
             
-            # Bot တစ်ကောင်ချင်းစီကို Initialize လုပ်ခြင်း
             await app.initialize()
             await app.start()
             await app.updater.start_polling()
-            print(f"🚀 Bot {token.split(':')[0]} is Ready!")
+            print(f"🚀 Bot Ready: {token.split(':')[0]}")
         except Exception as e:
-            print(f"❌ Token Error {token[:10]}: {e}")
+            print(f"❌ Error starting bot: {e}")
 
-    # Bot တွေ အားလုံး မပိတ်သွားအောင် စောင့်ကြည့်နေခြင်း
     while True:
         await asyncio.sleep(3600)
 
