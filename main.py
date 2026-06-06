@@ -50,10 +50,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if not is_authorized(user_id):
         return await update.message.reply_text(
-            f"မင်းကိုအရှင်အခင်အီကိုပေးမသုံးသေးဘူး။**\n\nဒီ Link ကိုအရင် Join လိုက်၊ ပြီးရင် အီကို့ဆီမှာအသနားသွားခံ -\n {MY_LINK}\n\n (ပြီးရင် Dm မှာပါမစ်လာယူ @Ecco2k5)",
+            f"မင်းကိုအရှင်အခင်အီကိုပေးမသုံးသေးဘူး။\n\nဒီ Link ကိုအရင် Join လိုက်၊ ပြီးရင် အီကို့ဆီမှာအသနားသွားခံ😪 -\n {MY_LINK}\n\n (ပြီးရင် Dm မှာပါမစ်လာယူ @Ecco2k5)",
             disable_web_page_preview=False
         )
-    await update.message.reply_text("အရှင်သခင်အီကို လိုအပ်ရာခိုင်းစေဖို့ အဆင်သင့်ပါပဲ!")
+    await update.message.reply_text("အရှင်သခင်အီကို လိုအပ်ရာခိုင်းစေဖို့ အဆင်သင့်ပါပဲ!🫡")
 
 async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -103,7 +103,7 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if bot_id not in all_running_tasks:
         all_running_tasks[bot_id] = {}
     all_running_tasks[bot_id][chat_id] = task
-    await update.message.reply_text(f"အရှင်သခင်အီကိုရဲ့အမိန့်အရ {target} ကို စတင်အနိုင်ကျင့်ပါတော့မည်!")
+    await update.message.reply_text(f"အရှင်သခင်အီကိုရဲ့အမိန့်အရ {target} ကို စတင်အနိုင်ကျင့်ပါတော့မည်!🫡")
 
 # 1️⃣ /stop သို့မဟုတ် /stop @botusername (သက်ဆိုင်ရာ Bot တစ်ကောင်တည်းကိုပဲ လက်ရှိ Group မှာ ရပ်ခြင်း)
 async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -123,9 +123,9 @@ async def stop_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if current_bot_id in all_running_tasks and chat_id in all_running_tasks[current_bot_id]:
         all_running_tasks[current_bot_id][chat_id].cancel()
         del all_running_tasks[current_bot_id][chat_id]
-        await update.message.reply_text(f"✅ @{current_bot_username} ကို ဒီ Group ထဲမှာ ရပ်နားလိုက်ပါပြီ!")
+        await update.message.reply_text(f"အမိန့်ကိုလက်ခံရရှိပါသည်။ @{current_bot_username} သည် Group ထဲမှာရပ်နားလိုက်ပါပြီ!")
     else:
-        await update.message.reply_text(f"❌ ဒီ Bot က ဒီ Group ထဲမှာ Spam မလုပ်နေပါဘူး။")
+        await update.message.reply_text(f"ဒီ Bot က ဒီ Group ထဲမှာ Spam မလုပ်နေပါဘူး။")
 
 # 2️⃣ /3stun (ဘော့ (၃) ကောင်လုံးကို လက်ရှိ Group ထဲမှာတင် တစ်ပြိုင်နက်တည်း ရပ်တန့်ခြင်း)
 async def stun_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -144,7 +144,7 @@ async def stun_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if stopped_count > 0:
         await update.message.reply_text(f"⚡ **/3stun အမိန့်အရ** ဘော့အားလုံးကို ဒီ Group ထဲမှာ အကုန်ရပ်လိုက်ပါပြီ!")
     else:
-        await update.message.reply_text("❌ ဒီ Group ထဲမှာ Spam နေတဲ့ ဘော့ မရှိပါဘူး။")
+        await update.message.reply_text("Group ထဲမှာ Spam နေတဲ့ ဘော့ မရှိပါဘူး။")
 
 # 3️⃣ /Reset (ဘယ် Group မှာမဆို ရှိသမျှ Bot တွေရဲ့ Spam Task အားလုံးကို တစ်ကမ္ဘာလုံးအတိုင်းအတာနဲ့ Force Kill လုပ်ခြင်း)
 async def reset_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
