@@ -62,7 +62,7 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # ခွင့်ပြုချက် စစ်ဆေးခြင်း
     if not is_authorized(user_id):
-        return await update.message.reply_text(f"အရှင်သခင်အီကိုက ပေးမသုံးသေးဘူး။ @Ecco2k5 ခွင့်ပြုချက်တောင်း: {MY_LINK}")
+        return await update.message.reply_text(f"အရှင်သခင်အီကိုက ပေးမသုံးသေးဘူး။ @Ecco2k5 ခွင့်ပြုချက်တောင်း ဒီ Link လဲ Join မအေလိုး {MY_LINK}")
 
     # လက်ရှိ Bot ရဲ့ ဒီ Chat ထဲမှာ အဟောင်း Run နေတာရှိရင် အရင် Cancel လုပ်မယ်
     if bot_id in all_running_tasks and chat_id in all_running_tasks[bot_id]:
@@ -142,7 +142,7 @@ async def stun_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
             stopped_count += 1
 
     if stopped_count > 0:
-        await update.message.reply_text(f"⚡ **/3stun အမိန့်အရ** ဘော့အားလုံးကို ဒီ Group ထဲမှာ အကုန်ရပ်လိုက်ပါပြီ!")
+        await update.message.reply_text(f"/3stun အမိန့်အရ ဘော့အားလုံးကို ဒီ Group ထဲမှာ အကုန်ရပ်လိုက်ပါပြီ။ Force Killed !")
     else:
         await update.message.reply_text("Group ထဲမှာ Spam နေတဲ့ ဘော့ မရှိပါဘူး။")
 
@@ -158,7 +158,7 @@ async def reset_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
             total_killed += 1
             
     all_running_tasks.clear()
-    await update.message.reply_text(f"🚨 **/Reset စနစ်ဖြင့်** ရှိသမျှ Group ပေါင်းစုံက Spam Task ({total_killed}) ခုလုံးကို လုံးဝ Clear လုပ်လိုက်ပါပြီ!")
+    await update.message.reply_text(f"/Reset System ဖြင်ရှိသမျှ Group ပေါင်းစုံက Spam Task ({total_killed}) ခုလုံးကို လုံးဝ Clear လုပ်လိုက်ပါပြီ!")
 
 # --- MAIN RUNNER ---
 async def main():
