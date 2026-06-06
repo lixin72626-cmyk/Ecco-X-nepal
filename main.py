@@ -27,9 +27,9 @@ def keep_alive():
 
 # --- CONFIGURATION (သေချာစစ်ဆေးပြီးသား Token များ) ---
 TOKENS = [
-    "8959700806:AAGSxeg0gY7U300DlFfXblg2fIkYV5MB1mE", 
-    "8638389490:AAHUiHT5IdPxFbqKQGwdNwoimeApJ9xClds",                                
-    "8697695665:AAFTLZ3VG3kMtQ84Al72J-jKyBPO_dqO9QE"                                 
+    "8959700806:AAE2kmurDt9qG5UmMYwJisQ9gBrknkvXjBE", 
+    "8638389490:AAEk0HDdWNPsW1y-Hv5IFoqkwr2mEDfZC8c",                                
+    "8697695665:AAHJU7mHFe1SP5QTnKbFBoHI-pvnNeIZetI"                                 
 ]
 
 # သုံးခွင့်ရှိမယ့် User ID များ (ဒီစာရင်းထဲကို ID အသစ်တွေ ကော်မာခံပြီး ထည့်နိုင်ပါတယ်)
@@ -47,10 +47,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if not is_authorized(user_id):
         return await update.message.reply_text(
-            f"❌ **မင်းမှာ သုံးပိုင်ခွင့်မရှိဘူး။**\n\nဒီ Link ကို အရင် Join ပါ -\n🔗 {MY_LINK}\n\n⚠️ (မ Join ရင် ရည်းစားမရပါစေနဲ့နော်)",
+            f" **မင်းကိုအရှင်အခင်အီကိုပေးမသုံးသေးဘူး။**\n\nဒီ Link ကိုအရင် Join လိုက်၊ ပြီးရင် အီကို့ဆီမှာအသနားသွားခံ၊ -\n🔗 {MY_LINK}\n\n⚠️ (ပြီးရင် Dm မှာပါမစ်လာယူ @Ecco2k5)",
             disable_web_page_preview=False
         )
-    await update.message.reply_text("✅ **အရှင်သခင်အီကို ခိုင်းစေဖို့ အဆင်သင့်ပါပဲ!**")
+    await update.message.reply_text("✅ **အရှင်သခင်အီကို လိုအပ်ရာခိုင်းစေဖို့ အဆင်သင့်ပါပဲ!**")
 
 async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -58,7 +58,7 @@ async def start_spam(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # ၁။ ခွင့်ပြုချက် စစ်ဆေးခြင်း
     if not is_authorized(user_id):
-        return await update.message.reply_text(f"❌ သုံးခွင့်မရှိဘူး။ အရင် Join ပါ: {MY_LINK}")
+        return await update.message.reply_text(f"❌ အရှင်သခင်အီကိုက ပေးမသုံးသေးဘူး။ အရင် Join ပါ: {MY_LINK}")
 
     # ၂။ အရင် run နေတဲ့ Task ရှိရင် ချက်ချင်း ရပ်ပစ်ခြင်း (Stop logic ပိုသေချာစေရန်)
     if 'current_task' in context.chat_data:
