@@ -1,3 +1,20 @@
+from flask import Flask
+import threading
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot is Alive!"
+
+def run_flask():
+    # Render က ပေးတဲ့ Port ကို Auto ဖတ်ခိုင်းတာပါ
+    import os
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
+
+# Web Server ကို နောက်ကွယ်ကနေ Auto Run ခိုင်းထားမယ်
+threading.Thread(target=run_flask, daemon=True).start()
 import asyncio
 import time
 import sqlite3
