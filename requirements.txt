@@ -1,2 +1,5 @@
-python-telegram-bot
-flask
+telethon
+requests
+aiohttp
+aiosqlite
+googletrans==4.0.0-rc1
