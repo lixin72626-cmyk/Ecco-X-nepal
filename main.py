@@ -32,7 +32,7 @@ TOKENS = [
 ]
 
 # သုံးခွင့်ရှိမယ့် User ID များ (ဒီစာရင်းထဲကို ID အသစ်တွေ ကော်မာခံပြီး ထည့်နိုင်ပါတယ်)
-AUTHORIZED_USERS = [7681995468] 
+AUTHORIZED_USERS = [7681995468,8593799746] 
 
 MY_LINK = "https://t.me/eccolism"
 
