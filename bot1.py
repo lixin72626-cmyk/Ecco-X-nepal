@@ -29,7 +29,7 @@ TRACE_API = "https://api.trace.moe/search"
 # ==========================
 API_ID = int(os.environ.get("API_ID", 34166212))
 API_HASH = os.environ.get("API_HASH", "753aae555e6d5901145fc8685d47bffe")
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "8959700806:AAEPYVSxBnbvzVlPXOmnqW0dzXf3PgY7OZI")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "8959700806:AAGXpnjbOlUCUeZW9twboBhUtODbCwZ2Tf8")
 
 OWNER_ID = 7681995468
 BOT_OWNER_ID = 7681995468
