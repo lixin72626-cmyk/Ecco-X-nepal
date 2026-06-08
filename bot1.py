@@ -14,7 +14,8 @@ def run_flask():
     app.run(host='0.0.0.0', port=port)
 
 # Web Server ကို နောက်ကွယ်ကနေ Auto Run ခိုင်းထားမယ်
-threading.Thread(target=run_flask, daemon=True).start()import asyncio
+threading.Thread(target=run_flask, daemon=True).start()
+import asyncio
 import time
 import sqlite3
 import os
