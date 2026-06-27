@@ -207,7 +207,7 @@ async def start_command(event):
 @bot.on(events.NewMessage(pattern=r"(?i)^အရှိန် (.+)"))
 async def set_speed(event):
     if not has_permission(event.sender_id):
-        return await event.reply("မင်းကသခင်နတ်စောင်းကိုမလေးမစားလုပ်ထားပီးသုံးချင်တာလားစောက်ခွေး")
+        return await event.reply("မင်းကသခင်အီကိုကို့မလေးမစားလုပ်ထားပီးသုံးချင်တာလားစောက်ခွေး")
     chat_id = event.chat_id
     try:
         speed = float(event.pattern_match.group(1))
@@ -220,7 +220,7 @@ async def set_speed(event):
 @bot.on(events.NewMessage(pattern=r"(?i)^သတ်ပလိုက်(?:\s|$)"))
 async def attack_user(event):
     if not has_permission(event.sender_id):
-        return await event.reply("မင်းကသခင်နတ်စောင်းကိုမလေးမစားလုပ်ထားပီးသုံးချင်တာလားစောက်ခွေး")
+        return await event.reply("မင်းကသခင်အီကို့ကိုမလေးမစားလုပ်ထားပီးသုံးချင်တာလားစောက်ခွေး")
     chat_id = event.chat_id
     if event.is_reply:
         reply_msg = await event.get_reply_message()
@@ -236,7 +236,7 @@ async def attack_user(event):
             return await event.reply("မင်းပြောတဲ့ခွေးမျိုးလေးကိုရှာမတွေ့သေးပါ Try.")
 
     if is_owner(target_id):
-        return await event.reply("သခင်နတ်စောင်းကို ဘယ်လိုနည်းလမ်းမျိုးနဲ့မှ တိုက်ခိုက်လို့မရပါဘူး လေးစားမှုဆိုတာရှိစမ်း")
+        return await event.reply("သခင်အီကို့ကို ဘယ်လိုနည်းလမ်းမျိုးနဲ့မှ တိုက်ခိုက်လို့မရပါဘူး လေးစားမှုဆိုတာရှိစမ်း")
 
     texts = cursor.execute("SELECT text FROM asave ORDER BY id ASC").fetchall()
     if not texts:
@@ -275,7 +275,7 @@ async def attack_user(event):
 @bot.on(events.NewMessage(pattern=r"(?i)^ရပ်တော့"))
 async def stop_attack(event):
     if not has_permission(event.sender_id):
-        return await event.reply("သခင်နတ်စောင်းဆီက ခွင့်ပြုချက်မရထားပါ")
+        return await event.reply("သခင်အီကို့က ခွင့်ပြုချက်မရထားပါ")
     chat_id = event.chat_id
     if chat_id in attack_tasks:
         for task in attack_tasks[chat_id].values():
@@ -423,13 +423,13 @@ async def reply_engine():
 @bot.on(events.NewMessage(pattern=r"(?i)^ရိုက်သတ်"))
 async def set_troll(event):
     if not has_permission(event.sender_id):
-        return await event.reply("မင်းကသခင်နတ်စောင်းကိုမလေးမစားလုပ်ထားပီးသုံးချင်တာလားစောက်ခွေး")
+        return await event.reply("မင်းကသခင်အီကို့ကိုမလေးမစားလုပ်ထားပီးသုံးချင်တာလားစောက်ခွေး")
     if not event.is_reply:
         return await event.reply("❌အသုံးပြုပုံမှားယွင်းနေပါတယ် (ရိုက်သတ်) <reply_user> .....။")
     reply_msg = await event.get_reply_message()
     target_id = reply_msg.sender_id
     if is_owner(target_id):
-        return await event.reply("သခင်နတ်စောင်းကို ဘယ်လိုနည်းလမ်းမျိုးနဲ့မှ တိုက်ခိုက်လို့မရပါဘူး လေးစားမှုဆိုတာရှိစမ်း")
+        return await event.reply("သခင်အီကို့ကို ဘယ်လိုနည်းလမ်းမျိုးနဲ့မှ တိုက်ခိုက်လို့မရပါဘူး လေးစားမှုဆိုတာရှိစမ်း")
     troll_targets[target_id] = {"index": 0}
     await event.reply("တိုက်ခိုက်မှုကိုစတင်လိုက်ပါပီ ရပ်တန့်လိုပါက (ခွင့်လွတ်လိုက်) <reply> ....။")
 
