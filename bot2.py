@@ -1,27 +1,34 @@
+# 1. [ဒီနေရာက စပြီး အပေါ်ဆုံးမှာ ထည့်ရပါမယ်]
 import os
 from threading import Thread
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-# 1. Render အကြိုက် Port ဖွင့်ပေးမယ့် Server အတု ဆောက်ခြင်း
 class DummyServer(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.end_headers()
-        self.wfile.write(b"Bot is alive and running!")
+        self.wfile.write(b"Bot is alive!")
+        
+    def do_HEAD(self):
+        self.send_response(200)
+        self.end_headers()
 
 def run_dummy_server():
-    # Render က ပေးတဲ့ PORT ကို ယူမယ်၊ မရှိရင် 10000 ကို သုံးမယ်
     port = int(os.environ.get("PORT", 10000))
     server = HTTPServer(('0.0.0.0', port), DummyServer)
     server.serve_forever()
 
-# 2. သင့်ရဲ့ Bot ကုဒ်တွေ မပွင့်ခင် ဒါကို Background မှာ အရင် Run ခိုင်းထားမယ်
+# Server အတုကို Background မှာ အရင် Run ခိုင်းလိုက်ပြီ
 Thread(target=run_dummy_server, daemon=True).start()
 
-# =========================================================
-# ဒီအောက်ကနေစပြီး ဘရိုရဲ့ မူလ Bot ကုဒ်အဟောင်းတွေကို ဆက်ထားလိုက်ပါ
-# ဥပမာ - import telebot သို့မဟုတ် bot.polling() စတာတွေ...
-# =========================================================
+
+# 2. [ဒီအောက်ကနေမှ ဘရိုရဲ့ မူလ Bot ကုဒ်အဟောင်းတွေကို ဆက်ထားပါ]
+# ဥပမာ -
+# import telebot
+# import requests
+# bot = telebot.TeleBot("YOUR_TOKEN")
+# ... စသဖြင့် ...
+
 import asyncio
 import time
 import sqlite3
