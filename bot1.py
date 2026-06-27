@@ -16,6 +16,7 @@ def run_dummy_server():
 
 # သင့် Bot ကုဒ်တွေ မပွင့်ခင် ဒါကို Background မှာ အရင် Run ခိုင်းမယ်
 Thread(target=run_dummy_server, daemon=True).start()
+
 import asyncio
 import time
 import sqlite3
