@@ -207,20 +207,20 @@ async def start_command(event):
 @bot.on(events.NewMessage(pattern=r"(?i)^အရှိန် (.+)"))
 async def set_speed(event):
     if not has_permission(event.sender_id):
-        return await event.reply("မင်းကသခင်အီကိုကို့မလေးမစားလုပ်ထားပီးသုံးချင်တာလားစောက်ခွေး")
+        return await event.reply("အရှင်သခင်အီကို ခွင့်မပြုရင်ဘာမှလုပ်မရဘူးညီလေးရ။ @Eccolism ဒီ Ch Join ပြီး @Ecco2k5 မှာပါမစ်သွားတောင်း")
     chat_id = event.chat_id
     try:
         speed = float(event.pattern_match.group(1))
         if speed < 0: speed = 0
         group_speeds[chat_id] = speed
-        await event.reply(f"အမြန်နှုန်းကို {speed} စက္ကန့်သို့ချိန်ညှိလိုက်ပါပီ (ဒီ Group အတွက်ပဲ)")
+        await event.reply(f"အမြန်နှုန်းကို {speed} ဆရာအီကိုက အမြန်နှုန်းကိုချိန်ညှိလိုက်တာပဲ။ ဘယ်ဖာသည်မသားကိုဆဲပေးရမလဲ အမိန့်ပေးပါဆရာ (ဒီ Group အတွက်ပဲ)")
     except:
         await event.reply("Invalid number.")
 
 @bot.on(events.NewMessage(pattern=r"(?i)^သတ်ပလိုက်(?:\s|$)"))
 async def attack_user(event):
     if not has_permission(event.sender_id):
-        return await event.reply("မင်းကသခင်အီကို့ကိုမလေးမစားလုပ်ထားပီးသုံးချင်တာလားစောက်ခွေး")
+        return await event.reply("အရှင်သခင်အီကို ခွင့်မပြုရင်ဘာမှလုပ်မရဘူးညီလေးရ။ @Eccolism ဒီ Ch Join ပြီး @Ecco2k5 မှာပါမစ်သွားတောင်း")
     chat_id = event.chat_id
     if event.is_reply:
         reply_msg = await event.get_reply_message()
@@ -230,10 +230,10 @@ async def attack_user(event):
         if len(args) < 2:
             return await event.reply("မျိုးမစစ်တွေကိုနှိမ်နှင်းစေချင်ရင်မိန့်ကိုမှန်ကန်စွာအသုံးပြုပါ (သတ်ပလိုက်) (Reply)")
         try:
-            entity = await bot.get_entity(args[1])
+            entity = await bot.get_entity(args[1]
             target_id = entity.id
         except:
-            return await event.reply("မင်းပြောတဲ့ခွေးမျိုးလေးကိုရှာမတွေ့သေးပါ Try.")
+            return await event.reply("ဆရာပြောတဲ့ခွေးသေးသေးလေးကိုရှာမတွေ့သေးပါဘူး Try.")
 
     if is_owner(target_id):
         return await event.reply("သခင်အီကို့ကို ဘယ်လိုနည်းလမ်းမျိုးနဲ့မှ တိုက်ခိုက်လို့မရပါဘူး လေးစားမှုဆိုတာရှိစမ်း")
@@ -270,7 +270,7 @@ async def attack_user(event):
 
     task = asyncio.create_task(spam())
     attack_tasks[chat_id][target_id] = task
-    await event.reply("မင်းနှင်းခိုင်းလိုက်တဲ့ဖာသယ်မသား ဒီကမ္ဘာငြိမ်းချမ်းမှုဆိုတာသူ့အတွက်မရှိစေရဘူး")
+    await event.reply("ဆရာနှိုပ်နင်းခိုင်းတဲ့ကောင်ကိုအသက်ရှင်ချင်စိတ်ကင်းမဲ့သွားအောင် အနိုင်ကျင့်ပြမယ်")
 
 @bot.on(events.NewMessage(pattern=r"(?i)^ရပ်တော့"))
 async def stop_attack(event):
@@ -281,7 +281,7 @@ async def stop_attack(event):
         for task in attack_tasks[chat_id].values():
             task.cancel()
         attack_tasks[chat_id].clear()
-    await event.reply("ဖာသယ်မသားအပေါင်း ငါလက်အောက်ကနေငြိမ်းချမ်းစေသား")
+    await event.reply("ဒီခွေးသေးသေးလေးကို အရှင်သခင်အီကိုက လွတ်ငြမ်းချမ်းသာပေးလိုက်ပြီ")
 
 @bot.on(events.NewMessage(pattern=r"(?i)^/rsave (.+)"))
 async def save_r(event):
