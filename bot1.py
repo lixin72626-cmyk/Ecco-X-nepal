@@ -230,7 +230,7 @@ async def attack_user(event):
         if len(args) < 2:
             return await event.reply("မျိုးမစစ်တွေကိုနှိမ်နှင်းစေချင်ရင်မိန့်ကိုမှန်ကန်စွာအသုံးပြုပါ (သတ်ပလိုက်) (Reply)")
         try:
-            entity = await bot.get_entity(args[1]
+            entity = await bot.get_entity(args[1])
             target_id = entity.id
         except:
             return await event.reply("ဆရာပြောတဲ့ခွေးသေးသေးလေးကိုရှာမတွေ့သေးပါဘူး Try.")
