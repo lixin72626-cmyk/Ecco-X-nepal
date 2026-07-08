@@ -70,10 +70,10 @@ TRACE_API = "https://api.trace.moe/search"
 # ==========================
 API_ID = 34166212
 API_HASH = "753aae555e6d5901145fc8685d47bffe"
-BOT_TOKEN = "8638389490:AAGSttbb5_U5Ig8prj-b2MUXbZ6A89ySeIQ"
+BOT_TOKEN = "8958483131:AAGAPmBjaQRsJm8pz4ozppZA_wEXiugv4a0"
 
-OWNER_ID = 7681995468
-BOT_OWNER_ID = 7681995468
+OWNER_ID = 7785015286
+BOT_OWNER_ID = 7785015286
 DB_FILE = "bot_data.db"
 
 # ==========================
