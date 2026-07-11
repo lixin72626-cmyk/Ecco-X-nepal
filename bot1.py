@@ -15,7 +15,7 @@ def run_dummy_server():
     server = HTTPServer(('0.0.0.0', port), DummyServer)
     server.serve_forever()
 
-# 2. သင့်ရဲ့ Bot ကုဒ်တွေ မပွင့်ခင် ဒါကို Background မှာ အရင် Run ခိုင်းထားမယ်
+# 2. သင့်ရဲ့ ကBot ကုဒ်တွေ မပွင့်ခင် ဒါကို Background မှာ အရင် Run ခိုင်းထားမယ်
 Thread(target=run_dummy_server, daemon=True).start()
 
 # =========================================================
